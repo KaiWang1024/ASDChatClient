@@ -10,7 +10,8 @@ public class SocketClientBuilder implements ClientBuilder {
     @Override
     public void initClient() throws IOException {
         client = Client.getInstance();
-        client.initializeSocket(7878);
+        int port = (int)(Math.random() * 20000 + 1000);
+        client.initializeSocket(port);
     }
 
     @Override

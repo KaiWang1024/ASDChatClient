@@ -24,7 +24,7 @@ public class App implements Listener
         App app = new App();
         ASDChatClient client = new ASDChatClient(app);
         app.setClient(client);
-        app.login();
+//        app.login();
         app.readCommand();
     }
 
@@ -32,7 +32,7 @@ public class App implements Listener
         Console console = System.console();
         String username = console.readLine("Username: ");
         String password = new String(console.readPassword("Password: "));
-        this.client.login(username, password);
+//        this.client.login(username, password);
         this.readCommand();
     }
 
@@ -65,6 +65,8 @@ public class App implements Listener
             if (cmd.equals("register")) {
                 // register a new user
                 registerUser(payload);
+            } else if (cmd.equals("login")) {
+                login(payload);
             } else if (cmd.equals("group")) {
                 // create a group
                 createGroup(payload);
@@ -99,13 +101,35 @@ public class App implements Listener
         this.client.register(username, password);
     }
 
+    private void login(String payload) {
+        String[] args = payload.split(" ");
+        String username = "";
+        String password = "";
+        int i = 0;
+        while (i < args.length) {
+            if (args[i].equals("-u")) {
+                username = args[++i];
+                ++i;
+            } else if (args[i].equals("-p")) {
+                password = args[++i];
+                ++i;
+            } else {
+                ++i;
+            }
+        }
+//        System.out.println("register user");
+//        System.out.println("username: " + username);
+//        System.out.println("password: " + password);
+        this.client.login(username, password);
+    }
+
     private void sendMessage(String to, String payload) {
         boolean isBroadcast = payload.indexOf(" -g") >= 0 ? true : false;
         String msg = isBroadcast ? payload.replaceAll(" -g", "") : payload;
 //        System.out.println("Is group chat: " + isBroadcast);
 //        System.out.println("Send to: " + to);
 //        System.out.println("Message: " + msg);
-        this.client.sendMessage(to, msg, isBroadcast);
+        this.client.sendMessage(to, msg.trim(), isBroadcast);
     }
 
     private void createGroup(String payload) {
@@ -148,7 +172,7 @@ public class App implements Listener
 
     @Override
     public void receiveResponse(ResponseModel response) {
-        System.out.println("Error: " + response.getPayload());
+        System.out.println("Response: " + response.getPayload());
     }
 
     @Override

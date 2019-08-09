@@ -28,11 +28,10 @@ public class Client implements Subject {
     public void initializeSocket(int localPort) throws IOException {
         // init observers
         observers = new ArrayList<Observer>();
-
         // bind port
         socket.bind(new InetSocketAddress(Inet4Address.getLocalHost(), localPort));
         // load time
-        socket.setSoTimeout(3000);
+//        socket.setSoTimeout(10 * 1000);
         socket.setReuseAddress(true);
         socket.setTcpNoDelay(true);
         socket.setKeepAlive(true);
@@ -62,10 +61,12 @@ public class Client implements Subject {
 
     public void read() {
         try {
-            String response = reader.readLine();
-            System.out.println(response);
-            notifyObservers(response);
-            Thread.sleep(1000);
+            while (true) {
+                String response = reader.readLine();
+                System.out.println("receive: " + response);
+                notifyObservers(response);
+                Thread.sleep(1000);
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
