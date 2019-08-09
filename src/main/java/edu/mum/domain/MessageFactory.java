@@ -33,4 +33,12 @@ public class MessageFactory {
         model.setPayload("");
         return model;
     }
+
+    public static RequestModel createGroupListMessage() {
+        RequestModel model = new RequestModel("groupList");
+        model.setTo("");
+        model.setBroadcast(false);
+        model.setPayload("");
+        return model;
+    }
 }

@@ -57,6 +57,12 @@ public class ASDChatClient {
         manager.sendRequest(request);
     }
 
+    public void getGroupList() {
+        RequestModel request = MessageFactory.createGroupListMessage();
+        request.setFrom(this.username);
+        manager.sendRequest(request);
+    }
+
     private String hashSum(String input) {
         try {
             // Static getInstance method is called with hashing MD5
