@@ -1,12 +1,12 @@
 package edu.mum;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import edu.mum.domain.RequestModel;
 import edu.mum.domain.ResponseModel;
 import edu.mum.request.Listener;
 
 import java.io.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Hello world!
@@ -65,6 +65,9 @@ public class App implements Listener
             if (cmd.equals("register")) {
                 // register a new user
                 registerUser(payload);
+            } else if (cmd.equals("group")) {
+                // create a group
+                createGroup(payload);
             } else {
                 // send message
                 sendMessage(cmd, payload);
@@ -103,6 +106,27 @@ public class App implements Listener
 //        System.out.println("Send to: " + to);
 //        System.out.println("Message: " + msg);
         this.client.sendMessage(to, msg, isBroadcast);
+    }
+
+    private void createGroup(String payload) {
+        String[] args = payload.split(" ");
+        String groupName = "";
+        String memberString = "";
+        int i = 0;
+        while (i < args.length) {
+            if (args[i].equals("-u")) {
+                groupName = args[++i];
+                ++i;
+            } else if (args[i].equals("-l")) {
+                memberString = args[++i];
+                ++i;
+            } else {
+                ++i;
+            }
+        }
+        String[] members = memberString.split(",");
+        List<String> memList = Arrays.asList(members);
+        this.client.createGroup(groupName, memList);
     }
 
     public static void printHelp() {
