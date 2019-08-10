@@ -1,7 +1,8 @@
 package edu.mum;
 
-import edu.mum.domain.MessageFactory;
-import edu.mum.domain.RequestModel;
+import edu.mum.domain.AbstractRequestModel;
+import edu.mum.factory.IModelFactory;
+import edu.mum.factory.MessageFactory;
 import edu.mum.request.ClientManager;
 import edu.mum.request.Listener;
 
@@ -13,15 +14,17 @@ import java.util.List;
 public class ASDChatClient {
     private ClientManager manager;
     private String username;
+    private IModelFactory factory;
 
     public ASDChatClient(Listener listener) {
         manager = new ClientManager();
         manager.setListener(listener);
+        factory = new MessageFactory();
     }
 
     public void register(String username, String password) {
         this.username = username;
-        RequestModel msg = MessageFactory.createRegisterMessage();
+        AbstractRequestModel msg = factory.createRegisterMessage();
         msg.setFrom(username);
         msg.setPayload(hashSum(password));
         manager.sendRequest(msg);
@@ -29,14 +32,14 @@ public class ASDChatClient {
 
     public void login(String username, String password) {
         this.username = username;
-        RequestModel msg = MessageFactory.createLoginMessage();
+        AbstractRequestModel msg = factory.createLoginMessage();
         msg.setFrom(username);
         msg.setPayload(hashSum(password));
         manager.sendRequest(msg);
     }
 
     public void sendMessage(String to, String msg, boolean broadcast) {
-        RequestModel request = MessageFactory.createSendMessage();
+        AbstractRequestModel request = factory.createSendMessage();
         request.setFrom(this.username);
         request.setTo(to);
         request.setPayload(msg);
@@ -45,22 +48,30 @@ public class ASDChatClient {
     }
 
     public void getOnlineUsers() {
-        RequestModel request = MessageFactory.createUserListMessage();
+        AbstractRequestModel request = factory.createUserListMessage();
         request.setFrom(this.username);
         manager.sendRequest(request);
     }
 
     public void createGroup(String groupName, List<String> members) {
-        RequestModel request = MessageFactory.createGroupMessage();
+        AbstractRequestModel request = factory.createGroupMessage();
         request.setFrom(groupName);
         request.setPayload(String.join(",", members));
         manager.sendRequest(request);
     }
 
     public void getGroupList() {
-        RequestModel request = MessageFactory.createGroupListMessage();
+        AbstractRequestModel request = factory.createGroupListMessage();
         request.setFrom(this.username);
         manager.sendRequest(request);
+    }
+
+    public void disConnect() {
+        manager.disConnect();
+    }
+
+    public void reconnect() {
+
     }
 
     private String hashSum(String input) {
@@ -87,5 +98,9 @@ public class ASDChatClient {
         catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public void setFactory(IModelFactory factory) {
+        this.factory = factory;
     }
 }

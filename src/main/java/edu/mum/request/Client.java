@@ -13,6 +13,7 @@ public class Client implements Subject {
     private Thread readerThread;
     private List<Observer> observers;
     private final Object MUTEX = new Object();
+    private boolean keepLive = true;
 
     private Client() {
         this.socket = new Socket();
@@ -61,9 +62,8 @@ public class Client implements Subject {
 
     public void read() {
         try {
-            while (true) {
+            while (keepLive) {
                 String response = reader.readLine();
-                System.out.println("receive: " + response);
                 notifyObservers(response);
                 Thread.sleep(1000);
             }
@@ -73,6 +73,7 @@ public class Client implements Subject {
     }
 
     public void close() {
+        keepLive = false;
         try {
             if (printStream != null) {
                 printStream.close();
@@ -83,7 +84,6 @@ public class Client implements Subject {
             if (socket != null) {
                 socket.close();
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         }

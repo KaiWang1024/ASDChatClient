@@ -1,6 +1,8 @@
 package edu.mum.domain;
 
-public class ResponseModel {
+import com.alibaba.fastjson.JSON;
+
+public class ResponseModel implements IResponseModel {
     private boolean success;
     private String payload;
 
@@ -31,5 +33,10 @@ public class ResponseModel {
                 "success=" + success +
                 ", payload='" + payload + '\'' +
                 '}';
+    }
+
+    @Override
+    public IResponseModel deserialize(String string) {
+        return JSON.parseObject(string, this.getClass());
     }
 }

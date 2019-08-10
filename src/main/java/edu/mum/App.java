@@ -1,5 +1,7 @@
 package edu.mum;
 
+import edu.mum.domain.IRequestModel;
+import edu.mum.domain.IResponseModel;
 import edu.mum.domain.RequestModel;
 import edu.mum.domain.ResponseModel;
 import edu.mum.request.Listener;
@@ -171,12 +173,14 @@ public class App implements Listener
     }
 
     @Override
-    public void receiveResponse(ResponseModel response) {
-        System.out.println("Response: " + response.getPayload());
+    public void receiveResponse(IResponseModel response) {
+        System.out.println("Response from server: ");
+        System.out.println(response.toString());
     }
 
     @Override
-    public void receiveMessage(RequestModel message) {
-        System.out.println(message.getFrom() + ": " + message.getPayload());
+    public void receiveMessage(IRequestModel model) {
+        RequestModel msg = (RequestModel)model;
+        System.out.println(msg.getFrom() + ": " + msg.getPayload());
     }
 }
